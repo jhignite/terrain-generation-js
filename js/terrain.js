@@ -54,3 +54,15 @@ TERRAIN.randomLine.prototype.locatePoint = function(point)
 {
 
 };
+
+TERRAIN.Plane = function(width, height)
+{
+	this.geometry = new THREE.PlaneGeometry(width, height, width, height);
+
+};
+
+TERRAIN.Sphere = function(radius)
+{
+	this.geometry = new THREE.SphereGeometry(radius, radius/2, radius/2);
+
+};

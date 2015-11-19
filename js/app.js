@@ -6,9 +6,9 @@
 // author: Jesse Hignite
 //
 
-var	renderer, scenes, camera, controls;
-var	planeGeometry, planeMaterial, plane;
-var	sphereGeometry, sphereMaterial, sphere;
+var	renderer, scenes, camera, controls, terrain, index;
+var	planeGeometry, planeMaterial, planes;
+var	sphereGeometry, sphereMaterial, spheres;
 var	wireframe = false;
 
 function onLoad()
@@ -20,6 +20,9 @@ function onLoad()
 	renderer = new THREE.WebGLRenderer({antialias:true});
 	renderer.setSize(container.offsetWidth, container.offsetHeight);
 	container.appendChild(renderer.domElement);
+
+	// index will be the current terrain generator and scene
+	index = 0;
 
 	// Initialize scenes
 	scenes = [];
@@ -34,7 +37,16 @@ function onLoad()
 	// OrbitControls
 	controls = new THREE.OrbitControls(camera);
 
+	initTerrain();
+};
 
+function initTerrain();
+{
+	terrain = [];
+	terrain[0] = new TERRAIN.Generator("plane-fault", plane);
+	terrain[1] = new TERRAIN.Generator("plane-circle", plane);
+	terrain[2] = new TERRAIN.Generator("plane-diamond-square", plane);
+	terrain[3] = new TERRAIN.Generator("sphere-fault", sphere);
 };
 
 function run()
