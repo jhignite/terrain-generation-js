@@ -6,7 +6,7 @@
 // author: Jesse Hignite
 //
 
-var	renderer, scenes, camera, controls, terrain, index;
+var	renderer, scene, camera, controls, terrain, index;
 var	planeGeometry, planeMaterial, planes;
 var	sphereGeometry, sphereMaterial, spheres;
 var	wireframe = false;
@@ -24,36 +24,50 @@ function onLoad()
 	// index will be the current terrain generator and scene
 	index = 0;
 
-	// Initialize scenes
-	scenes = [];
-	for(var i = 0; i < 4; i++)
-		scenes[i] = new THREE.Scene();
+	// Initialize scene
+	scene = new THREE.Scene();
 	
 	// Create camera and add it to the first scene initially
 	camera = new THREE.PerspectiveCamera(45, container.offsetWidth/container.offsetHeight, .001, 4000);
-	camera.position.set(0, 50, 0);
-	scenes[0].add(camera);
+	camera.position.set(0, 100, 0);
+	scene.add(camera);
 
 	// OrbitControls
 	controls = new THREE.OrbitControls(camera);
 
 	initTerrain();
+	terrain[0].update();
+	for(var i = 0; i < 1000; i++)
+		terrain[0].iterate();
+	terrain[0].shape.mesh.position.z = 0;
+
+	for(var propertyName in terrain[0].shape.geometry.faces[0])
+		console.log(propertyName);
+	console.log(terrain[0].shape.mesh.position);
+	console.log(camera.position);
+	for(var i = 0; i < terrain[0].lines.length; i++)
+		scene.add(terrain[0].lines[i].line);
+	run();
 };
 
-function initTerrain();
+function initTerrain()
 {
 	terrain = [];
-	terrain[0] = new TERRAIN.Generator("plane-fault", plane);
-	terrain[1] = new TERRAIN.Generator("plane-circle", plane);
-	terrain[2] = new TERRAIN.Generator("plane-diamond-square", plane);
-	terrain[3] = new TERRAIN.Generator("sphere-fault", sphere);
+	planes = [];
+	for(var i = 0; i < 3; i++)
+		planes.push(new TERRAIN.Plane(128, 128));
+	terrain[0] = new TERRAIN.Generator("plane-fault", planes[0]);
+	scene.add(terrain[0].shape.mesh);
+	terrain[1] = new TERRAIN.Generator("plane-circle", planes[1]);
+	terrain[2] = new TERRAIN.Generator("plane-diamond-square", planes[2]);
+	//terrain[3] = new TERRAIN.Generator("sphere-fault", sphere);
 };
 
 function run()
 {
-	currentScene = scene[0];
+	renderer.render(scene, camera);
 
-	renderer.render(currentScene, camera);
+	terrain[0].update();
 
 	requestAnimationFrame(run);
 };
